@@ -3,6 +3,7 @@ function pdf(args, kwargs)
   local width = pandoc.utils.stringify(kwargs['width'])
   local height = pandoc.utils.stringify(kwargs['height'])
   local border = pandoc.utils.stringify(kwargs['border'])
+  local title = pandoc.utils.stringify(kwargs['title'])
   local class = pandoc.utils.stringify(kwargs['class'])
   local image = pandoc.utils.stringify(kwargs['image'])
   local image_force = pandoc.utils.stringify(kwargs['image_force'])
@@ -21,6 +22,10 @@ function pdf(args, kwargs)
   
   if border ~= '' then
     border = 'border="' .. border .. '" '
+  end
+  
+  if title ~= '' then
+    title = 'title="' .. title .. '" '
   end
   
   if class ~= '' then
@@ -46,12 +51,12 @@ function pdf(args, kwargs)
   -- detect html
   if quarto.doc.isFormat("html:js") then
     if image_force == 'TRUE' then
-      return pandoc.RawInline('html', '<a href="' .. data .. '" download><img src="' .. image .. '" ' .. image_width .. image_height .. image_class .. image_border .. ' /></a>')
+      return pandoc.RawInline('html', '<a rel="nofollow" href="' .. data .. '" download'.. title .. ' ><img src="' .. image .. '" ' .. image_width .. image_height .. image_class .. image_border .. ' /></a>')
     end
     if image ~= '' then
-      return pandoc.RawInline('html', '<object data="' .. data .. '" type="application/pdf"' .. width .. height .. class .. border .. '><a href="' .. data .. '" download><img src="' .. image .. '" ' .. image_width .. image_height .. image_class .. image_border .. ' /></a></object>')
+      return pandoc.RawInline('html', '<object data="' .. data .. '" type="application/pdf"' .. title .. width .. height .. class .. border .. '><a rel="nofollow" href="' .. data .. '" downloadd'.. title .. '><img src="' .. image .. '" ' .. image_width .. image_height .. image_class .. image_border .. ' /></a></object>')
     else
-      return pandoc.RawInline('html', '<object data="' .. data .. '" type="application/pdf"' .. width .. height .. class .. border .. '><a href="' .. data .. '" download>Download PDF file.</a></object>')
+      return pandoc.RawInline('html', '<object data="' .. data .. '" type="application/pdf"' .. width .. height .. class .. border .. '><a rel="nofollow" href="' .. data .. '" download>Download PDF file.</a></object>')
     end
   else
     return pandoc.Null()
